@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Middle-earth Chronicles</title>
+<style>
+
+:root{
+  --bg:#07090a;
+  --bg2:#0d1112;
+  --panel:#121517;
+  --panel2:#181d1f;
+  --panel3:#1d2320;
+  --gold:#c8a35a;
+  --gold2:#efd18d;
+  --gold3:#8a6a33;
+  --moss:#495944;
+  --moss2:#283127;
+  --text:#ece3cf;
+  --muted:#aaa48e;
+  --line:rgba(200,163,90,.24);
+  --line2:rgba(239,209,141,.52);
+  --danger:#b46453;
+  --radius:20px;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --display:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font)}
+body{
+  background:
+    radial-gradient(circle at 82% 10%,rgba(239,209,141,.08),transparent 24%),
+    radial-gradient(circle at 18% 24%,rgba(79,104,73,.14),transparent 28%),
+    linear-gradient(135deg,#050607 0%,#0c1011 48%,#060707 100%);
+  background-attachment:fixed;
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.14;
+  background:url("assets/parchment-noise.png") center/512px 512px repeat;
+  mix-blend-mode:soft-light;
+}
+body:after{
+  content:"";position:fixed;right:-220px;top:-40px;width:760px;height:760px;pointer-events:none;
+  background:url("assets/tengwar-circle-clean.png") center/contain no-repeat;
+  opacity:.035;filter:drop-shadow(0 0 24px rgba(239,209,141,.08));
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.screen{display:none}
+.screen.active{display:block}
+.app{min-height:100vh}
+
+.app-top{
+  height:76px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 20px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(7,9,10,.96),rgba(10,12,13,.90));
+  position:sticky;top:0;z-index:10;backdrop-filter:blur(14px);
+  box-shadow:0 18px 40px rgba(0,0,0,.28);
+}
+.app-top:after{
+  content:"";position:absolute;left:112px;right:24px;bottom:7px;height:15px;
+  background:url("assets/tengwar-ornament.png") left center/auto 15px repeat-x;opacity:.11;pointer-events:none;
+}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.brand-copy{display:grid;gap:4px;min-width:0}
+.brand-ring,.ring-dot{
+  width:68px;height:34px;flex:0 0 auto;background:url("assets/fresh-ring-icon.webp") center/contain no-repeat;
+  filter:drop-shadow(0 0 12px rgba(200,163,90,.30));
+}
+.brand-title{
+  font-family:var(--display);text-transform:uppercase;letter-spacing:.14em;font-weight:700;color:var(--gold2);line-height:1;
+}
+.brand-sub{font-size:11px;color:var(--muted);letter-spacing:.10em}
+.brand-script{height:16px;width:220px;background:url("assets/tengwar-ornament.png") left center/contain no-repeat;opacity:.46}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{
+  border:1px solid var(--line);border-radius:999px;padding:9px 13px;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(18,21,23,.94));
+  color:var(--text);box-shadow:0 10px 24px rgba(0,0,0,.22);transition:.16s ease;
+}
+.btn:hover{border-color:var(--line2);transform:translateY(-1px);box-shadow:0 12px 28px rgba(0,0,0,.28)}
+.btn.primary{
+  background:linear-gradient(180deg,var(--gold2),var(--gold));color:#24190b;font-weight:800;border-color:rgba(255,235,190,.7)
+}
+.btn.small{font-size:12px;padding:6px 10px}
+.btn.danger{background:linear-gradient(180deg,rgba(180,100,83,.22),rgba(40,16,14,.9));border-color:rgba(180,100,83,.4)}
+
+.page{max-width:1240px;margin:0 auto;padding:18px}
+.card{
+  border:1px solid var(--line);border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(22,26,28,.94),rgba(12,15,16,.96));
+  box-shadow:0 24px 60px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.03);
+  overflow:hidden;position:relative;
+}
+.card:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(239,209,141,.03)}
+.pad{padding:18px}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}
+h1,h2,h3,h4{font-family:var(--display);color:var(--gold2);letter-spacing:.05em;margin-top:0}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.grid{display:grid;gap:14px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.pill-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:rgba(255,255,255,.03);font-size:12px;color:var(--gold2)}
+
+.hero{position:relative;min-height:430px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:16px;align-items:stretch}
+.hero-map{
+  position:relative;overflow:hidden;padding:30px;display:flex;flex-direction:column;justify-content:space-between;color:var(--text);
+  background:
+    linear-gradient(100deg,rgba(8,10,11,.95) 0%,rgba(10,13,14,.90) 44%,rgba(10,13,14,.45) 100%),
+    url("assets/fresh-ring-hero.webp") right center/cover no-repeat;
+}
+.hero-map:before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 14% 22%,rgba(239,209,141,.14),transparent 24%),linear-gradient(180deg,transparent,rgba(0,0,0,.18));
+}
+.hero-map:after{
+  content:"";position:absolute;inset:14px;border:1px solid rgba(239,209,141,.08);border-radius:16px;pointer-events:none;
+}
+.hero-map h1{position:relative;z-index:1;font-size:clamp(44px,7vw,80px);line-height:.88;margin:0;text-transform:uppercase;color:var(--gold2);text-shadow:0 2px 16px rgba(0,0,0,.55)}
+.hero-map h1 span{display:block;color:#d0af67}
+.hero-copy{position:relative;z-index:1;max-width:620px;line-height:1.68;color:#ddd3bd}
+.ring-bg-photo{
+  position:absolute;right:-30px;bottom:-22px;width:540px;height:340px;
+  background:url("assets/fresh-ring-icon.webp") center/contain no-repeat;
+  opacity:.52;pointer-events:none;filter:drop-shadow(0 0 30px rgba(200,163,90,.18));
+}
+.hero-script{position:absolute;left:24px;right:24px;height:40px;background:url("assets/tengwar-ornament.png") center/contain no-repeat;opacity:.18;pointer-events:none}
+.hero-script-top{top:10px}.hero-script-bottom{bottom:12px}
+.verse-script{position:relative;z-index:1;height:42px;width:min(760px,96%);margin:10px 0 4px;background:url("assets/tengwar-verse-line.png") left center/contain no-repeat;opacity:.58}
+.feature{
+  padding:16px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(28,33,35,.92),rgba(15,18,20,.96));
+}
+.feature strong{display:block;color:var(--gold2);font-family:var(--display);margin-bottom:6px}
+
+.list-item{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.03)}
+.list-main{min-width:0;flex:1}.list-main strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avatar{width:54px;height:54px;border-radius:15px;border:1px solid var(--line2);object-fit:cover;background:#0d100f;display:grid;place-items:center;color:var(--gold2)}
+label{display:grid;gap:6px;font-size:13px;color:#d6c49b}
+input,select,textarea{
+  width:100%;border:1px solid var(--line);background:linear-gradient(180deg,rgba(10,12,12,.84),rgba(17,20,21,.96));
+  color:var(--text);border-radius:13px;padding:10px 11px;outline:none;
+}
+textarea{min-height:88px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--line2);box-shadow:0 0 0 3px rgba(200,163,90,.12)}
+
+.game{height:100vh;overflow:hidden;background:linear-gradient(180deg,#060808,#0b0f10 52%,#060807);position:relative}
+.game:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 72% 6%,rgba(239,209,141,.08),transparent 28%),radial-gradient(circle at 14% 70%,rgba(73,89,68,.12),transparent 30%)}
+.game-top{
+  height:92px;display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.05);
+  background:linear-gradient(180deg,rgba(8,10,11,.92),rgba(11,13,14,.84));position:relative;z-index:4;
+}
+.game-top:after{content:"";position:absolute;left:82px;right:210px;bottom:4px;height:16px;background:url("assets/tengwar-ornament.png") left center/auto 16px repeat-x;opacity:.14;pointer-events:none}
+.hamb{width:44px;height:44px;border:0;background:transparent;color:var(--muted);font-size:26px}
+.game-title{font-family:var(--display);color:var(--gold2);font-size:21px;text-transform:uppercase;letter-spacing:.08em}
+.game-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.active-label{margin-left:auto;color:var(--gold);font-family:var(--display);font-size:19px;letter-spacing:.28em;text-transform:uppercase}
+.active-label:before{content:"";display:inline-block;width:28px;height:14px;margin-right:10px;background:url("assets/fresh-ring-icon.webp") center/contain no-repeat;vertical-align:-2px;filter:drop-shadow(0 0 10px rgba(200,163,90,.24))}
+.game-main{height:calc(100vh - 92px);overflow:auto;padding:0 18px 96px;position:relative;z-index:2}
+.game-main:before{content:"";position:fixed;right:-150px;bottom:30px;width:520px;height:520px;background:url("assets/tengwar-circle-clean.png") center/contain no-repeat;opacity:.04;pointer-events:none}
+.game-content{max-width:980px;margin:0 auto;padding-top:12px}
+.top-collapse{border-bottom:1px solid rgba(255,255,255,.05);padding:10px 0}
+.fold{border:1px solid rgba(255,255,255,.06);background:linear-gradient(180deg,rgba(15,18,19,.78),rgba(9,11,12,.82));border-radius:14px;margin:8px 0;overflow:hidden}
+.fold summary{list-style:none;padding:14px 16px;color:var(--muted);text-transform:uppercase;letter-spacing:.18em}
+.fold summary::-webkit-details-marker{display:none}
+.fold-body{padding:0 16px 14px;color:var(--muted)}
+.story-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);margin-top:10px}
+.story-tabs button{border:0;border-bottom:2px solid transparent;background:rgba(255,255,255,.02);color:var(--muted);padding:14px;text-transform:uppercase;letter-spacing:.16em}
+.story-tabs button.active{color:var(--gold2);border-bottom-color:var(--gold2);background:rgba(200,163,90,.09)}
+.messages{min-height:420px;max-height:55vh;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.message{max-width:92%;padding:13px 14px;border-radius:18px;line-height:1.55;white-space:pre-wrap}
+.message.gm{align-self:flex-start;background:rgba(200,163,90,.08);border:1px solid var(--line)}
+.message.player{align-self:flex-end;background:rgba(44,58,45,.62);border:1px solid rgba(111,140,99,.32)}
+.message.ooc{background:rgba(74,83,96,.30)}
+.meta{font-size:11px;color:var(--muted);margin-bottom:5px}
+.composer{position:fixed;left:0;right:0;bottom:0;padding:12px 18px;background:rgba(8,10,11,.96);border-top:1px solid var(--line);z-index:5}
+.composer:before{content:"";position:absolute;left:18px;right:18px;top:6px;height:13px;background:url("assets/tengwar-ornament.png") center/auto 13px repeat-x;opacity:.11;pointer-events:none}
+.composer-inner{max-width:980px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 66px;gap:10px}
+.composer textarea{min-height:62px}
+.send{font-size:24px;border-radius:14px}
+.quest-strip{display:flex;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(90deg,rgba(200,163,90,.10),rgba(40,52,38,.14));border-bottom:1px solid var(--line)}
+.panel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.16);text-align:center}
+.stat strong{display:block;color:var(--gold2);font-size:20px}
+.meter{height:9px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;border:1px solid var(--line)}
+.meter span{display:block;height:100%;background:linear-gradient(90deg,var(--moss),var(--gold2))}
+.row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:8px}
+
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.2s;z-index:20}
+.drawer-backdrop.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;left:0;top:0;bottom:0;width:min(410px,82vw);transform:translateX(-102%);transition:transform .22s ease;
+  z-index:21;padding:22px 14px;overflow:auto;border-right:1px solid var(--line);
+  background:
+    linear-gradient(180deg,rgba(8,10,11,.97),rgba(11,14,15,.96) 42%,rgba(9,11,12,.98)),
+    url("assets/parchment-noise.png") center/420px 420px repeat;
+  box-shadow:30px 0 80px rgba(0,0,0,.65);
+}
+.drawer:before{content:"";position:absolute;right:-80px;top:100px;width:380px;height:200px;background:url("assets/fresh-drawer-ring.webp") center/contain no-repeat;opacity:.10;pointer-events:none;filter:drop-shadow(0 0 18px rgba(200,163,90,.15))}
+.drawer:after{content:"";position:absolute;left:-100px;bottom:70px;width:360px;height:360px;background:url("assets/tengwar-circle-clean.png") center/contain no-repeat;opacity:.07;pointer-events:none}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;position:relative;z-index:1}
+.drawer-title{color:var(--gold2);font-family:var(--display);letter-spacing:.16em;text-transform:uppercase;font-size:20px}
+.drawer-script{width:180px;height:24px;margin-top:6px;background:url("assets/tengwar-ornament.png") left center/contain no-repeat;opacity:.32}
+.nav-list{display:grid;gap:10px;position:relative;z-index:1}
+.nav-item{display:flex;align-items:center;gap:14px;border:1px solid transparent;border-radius:14px;padding:14px 12px;color:var(--muted);background:transparent;text-align:left;text-transform:uppercase;letter-spacing:.13em;font-size:15px}
+.nav-item:hover,.nav-item.active{color:var(--gold2);background:rgba(200,163,90,.09);border-color:var(--line)}
+.nav-icon{position:relative;overflow:hidden;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(200,163,90,.32);color:var(--gold2);box-shadow:inset 0 0 10px rgba(200,163,90,.06);background:rgba(255,255,255,.02)}
+.nav-icon:before{content:"";position:absolute;inset:4px;background:url("assets/fresh-ring-icon.webp") center/contain no-repeat;opacity:.14}
+.nav-item.active .nav-icon{box-shadow:inset 0 0 14px rgba(200,163,90,.14),0 0 12px rgba(200,163,90,.08)}
+.nav-item.active .nav-icon:before{opacity:.28}
+.section-script{height:22px;margin:-4px 0 12px;background:url("assets/tengwar-ornament.png") left center/contain no-repeat;opacity:.22}
+.mini-divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:14px 0}
+.danger-zone{border-color:rgba(180,100,83,.45);background:rgba(70,28,21,.16)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111514;border:1px solid var(--line2);border-radius:999px;padding:10px 14px;opacity:0;pointer-events:none;transition:.18s;z-index:99}
+.toast.show{opacity:1;bottom:30px}
+
+@media(max-width:900px){
+  .app-top{height:auto;align-items:flex-start}
+  .hero{grid-template-columns:1fr}
+  .grid.two,.grid.three,.panel-grid{grid-template-columns:1fr}
+  .game-top{height:92px}.game-top:after{right:24px;left:82px;opacity:.10}
+  .active-label{display:none}
+  .messages{max-height:50vh}
+  .ring-bg-photo{right:-70px;bottom:-8px;opacity:.30;width:420px;height:280px}
+  .hero-script{opacity:.14}
+}
+@media(max-width:560px){
+  .page{padding:10px}
+  .brand-sub{display:none}
+  .brand-script{width:120px;height:12px}
+  .top-actions .btn{padding:7px 9px;font-size:12px}
+  .game-top{padding:12px}.game-top:after{display:none}
+  .game-title{font-size:17px}
+  .composer{padding:10px}.composer-inner{grid-template-columns:minmax(0,1fr) 56px}
+  .hero-map h1{font-size:40px}
+  .ring-bg-photo{width:320px;height:220px;right:-70px;bottom:-10px}
+  .verse-script{height:30px}
+  .messages{min-height:360px}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<header id="appTop" class="app-top">
+  <div class="brand" onclick="go('dashboard')"><div class="brand-ring"></div><div class="brand-copy"><div class="brand-title">Middle-earth Chronicles</div><div class="brand-sub">Roads · Oaths · Shadow · Song</div><div class="brand-script" aria-hidden="true"></div></div></div>
+  <div class="top-actions"><button class="btn" onclick="go('dashboard')">Home</button><button class="btn" onclick="go('characterBuilder')">＋ Hero</button><button class="btn primary" onclick="go('campaignBuilder')">＋ Journey</button></div>
+</header>
+<main id="screen-dashboard" class="screen active page">
+  <section class="hero">
+    <div class="card hero-map">
+      <div class="ring-bg-photo" aria-hidden="true"></div>
+      <div class="hero-script hero-script-top" aria-hidden="true"></div>
+      <div class="hero-script hero-script-bottom" aria-hidden="true"></div>
+      <div><span class="pill" style="color:#2b210e;border-color:rgba(43,33,14,.28);background:rgba(255,255,255,.16)">v0.6.0 · Fresh Theme Rebuild</span><h1>Middle-earth <span>Chronicles</span></h1><div class="verse-script" aria-hidden="true"></div><p class="hero-copy">Built like the Star Wars app’s organized campaign cockpit: a clean story screen, hamburger navigation on the left, and every tool opening as its own full RPG-style page.</p></div>
+      <div class="pill-row"><button class="btn primary" onclick="go('campaignBuilder')">Begin a Journey</button><button class="btn" onclick="continueLatestCampaign()">Continue Road</button><button class="btn" onclick="go('characterBuilder')">Create Hero</button></div>
+    </div>
+    <div class="grid"><div class="feature"><strong>Left Navigation Drawer</strong><span class="muted">Story, quests, journey, character, inventory, shop, bonds, journal, and campaign controls are organized like the Star Wars layout.</span></div><div class="feature"><strong>One Ring Visual Language</strong><span class="muted">Ring motifs are used for the menu background, icons, and gold accenting.</span></div><div class="feature"><strong>Elvish-Inspired Decoration</strong><span class="muted">Decorative Tengwar-style script and ring imagery now sit throughout the menu, navigation, and major theme panels.</span></div><div class="feature"><strong>No Ship Stuff</strong><span class="muted">Ships are replaced by Journey / Map tools: region, destination, fatigue, supplies, weather, danger, and Shadow.</span></div></div>
+  </section>
+  <section class="grid two" style="margin-top:18px"><div class="card pad"><div class="section-title"><h2>Heroes</h2><button class="btn small" onclick="go('characterBuilder')">＋ New</button></div><div id="characterList" class="grid"></div></div><div class="card pad"><div class="section-title"><h2>Journeys</h2><button class="btn small" onclick="go('campaignBuilder')">＋ New</button></div><div id="campaignList" class="grid"></div></div></section>
+</main>
+<main id="screen-characterBuilder" class="screen page"><div class="card pad"><div class="section-title"><h2>Create Hero</h2><button class="btn" onclick="go('dashboard')">‹ Back</button></div><div class="grid two"><label>Name<input id="charName" placeholder="Arvedui, Mira, Borin, Pippin's reckless cousin..."/></label><label>Level<input id="charLevel" type="number" min="1" value="1"/></label></div><div class="grid three"><label>Ancestry<select id="charAncestry"></select></label><label>Culture<select id="charCulture"></select></label><label>Class<select id="charClass"></select></label></div><div class="grid two"><label>Background<select id="charBackground"></select></label><label>Starting Region<select id="charRegion"></select></label></div><div class="grid two"><label>Portrait Image<input id="portraitUpload" type="file" accept="image/*"/></label><label>Combat Token Image<input id="tokenUpload" type="file" accept="image/*"/></label></div><label>Character Notes<textarea id="charNotes" placeholder="Oath, fear, family, secret, or why this fool is walking toward danger instead of staying home."></textarea></label><div class="grid three"><label>Strength<input id="statStr" type="number" value="10"/></label><label>Dexterity<input id="statDex" type="number" value="10"/></label><label>Constitution<input id="statCon" type="number" value="10"/></label><label>Intellect<input id="statInt" type="number" value="10"/></label><label>Wisdom<input id="statWis" type="number" value="10"/></label><label>Presence<input id="statPre" type="number" value="10"/></label></div><div class="pill-row" style="margin-top:14px"><button class="btn primary" onclick="saveCharacterFromForm()">Save Hero</button><button class="btn" onclick="randomizeCharacterSeed()">Quick Seed</button></div></div></main>
+<main id="screen-campaignBuilder" class="screen page"><div class="card pad"><div class="section-title"><h2>New Journey</h2><button class="btn" onclick="go('dashboard')">‹ Back</button></div><div class="grid two"><label>Campaign Name<input id="campTitle" placeholder="The Road Beneath the Misty Mountains"/></label><label>Player Character<select id="campCharacter"></select></label></div><div class="grid two"><label>Era<select id="campEra"></select></label><label>Starting Region<select id="campRegion"></select></label></div><div class="grid three"><label>Tone<select id="campTone"></select></label><label>Shadow Level<select id="campShadow"></select></label><label>Campaign Mode<select id="campMode"><option>Quick Start</option><option>Custom Campaign</option></select></label></div><label>Campaign Premise<textarea id="campPremise" placeholder="Optional. Leave blank and the GM will build from your character and region."></textarea></label><button class="btn primary" onclick="createCampaignFromForm()">Create Journey</button></div></main>
+<main id="screen-game" class="screen game"><header class="game-top"><button class="hamb" onclick="openDrawer()">☰</button><div><div id="gameTitle" class="game-title">Campaign</div><div id="gameSubtitle" class="game-sub">Region · Character</div></div><div id="activeLabel" class="active-label">Story</div></header><div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div><aside class="drawer" id="navDrawer"><div class="drawer-head"><div><div class="drawer-title">Navigation</div><div class="drawer-script" aria-hidden="true"></div></div><button class="btn small" onclick="closeDrawer()">×</button></div><nav id="navList" class="nav-list"></nav></aside><section class="game-main"><div class="game-content" id="gameContent"></div></section></main>
+</div><div id="toast" class="toast"></div>
+<script>
+const APP_VERSION="0.6.0-middle-earth-fresh-retheme";
+const STORE_KEY="middleEarthChronicles.v0.5";
+const ancestryOptions=["Human","Elf","Dwarf","Hobbit"];
+const cultureOptions=["Gondor","Rohan","Dale","Bree-land","The Shire","Rivendell","Mirkwood","Erebor","Dunedain","Lothlorien"];
+const classOptions=["Ranger of the North","Ithilien Ranger","Warrior of Dale","Rohirrim Rider","Gondorian Soldier","Hobbit Burglar","Dwarven Shieldbearer","Elven Warden"];
+const backgroundOptions=["Wanderer","Exile","Noble-Blooded","Village Watch","Scholar of Old Lore","Craftsman","Scout","Reluctant Hero","Oathbound"];
+const regionOptions=["Bree-land","The Shire","Rivendell","Misty Mountains","Mirkwood","Dale","Erebor","Rohan","Gondor","Ithilien","Mordor Borderlands","Eriador Wilderness"];
+const eraOptions=["War of the Ring","After the War of the Ring","Fall of Arnor","Angmar War","Third Age Wilderness","Custom Era"];
+const toneOptions=["Heroic Adventure","Grim Survival","Fellowship Journey","Political Intrigue","Ancient Mystery","War Campaign"];
+const shadowOptions=["Low Shadow","Growing Darkness","War-Torn","Shadow-Haunted"];
+const navItems=[['story','Story','☰'],['quests','Quests','◇'],['journey','Map','◇'],['character','Character','♙'],['progression','Progression','↗'],['inventory','Inventory','⬡'],['shop','Shop','▣'],['party','Party','☷'],['bonds','Bonds','♡'],['journal','Journal','✎'],['campaign','Campaign','⚙']];
+let state=loadState(), activeChatMode='in', activeSection='story', tempPortrait='', tempToken='';
+function uid(p='id'){return `${p}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`}
+function esc(v){return String(v??'').replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]))}
+function loadState(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||JSON.parse(localStorage.getItem('middleEarthChronicles.v0.4'))||JSON.parse(localStorage.getItem('middleEarthChronicles.v0.3'))||JSON.parse(localStorage.getItem('middleEarthChronicles.v0.2'))||seedState()}catch{return seedState()}}
+function saveAll(){localStorage.setItem(STORE_KEY,JSON.stringify(state))}
+function seedState(){const char=makeCharacter({name:'Taran Underbough',ancestry:'Hobbit',culture:'Bree-land',className:'Hobbit Burglar',notes:'A too-curious wanderer with excellent hands, worse impulse control, and a dangerous fondness for old ruins.'});const camp=makeCampaign({title:'The Whispering Road',characterId:char.id,era:'Third Age Wilderness',region:'Bree-land',tone:'Ancient Mystery',shadowLevel:'Growing Darkness',premise:'Rumors say a forgotten road north of Bree has begun to whisper names at sunset.'});return{appVersion:APP_VERSION,characters:[char],campaigns:[camp],activeCharacterId:char.id,activeCampaignId:camp.id}}
+function makeCharacter(p={}){const c={id:uid('char'),name:p.name||'Unnamed Wanderer',level:+(p.level||1),xp:0,ancestry:p.ancestry||'Human',culture:p.culture||'Gondor',className:p.className||'Ranger of the North',background:p.background||'Wanderer',region:p.region||'Bree-land',notes:p.notes||'',portrait:p.portrait||'',token:p.token||p.portrait||'',stats:p.stats||{str:10,dex:10,con:10,int:10,wis:10,pre:10},skills:['Athletics','Awareness','Lore','Persuasion','Stealth','Travel'],virtues:[],gear:['Traveling clothes','Bedroll','Knife','Rations x3'],coin:25,shadow:0};applyDerived(c);return c}
+function applyDerived(c){const con=Math.floor((c.stats.con-10)/2),dex=Math.floor((c.stats.dex-10)/2),wis=Math.floor((c.stats.wis-10)/2);c.maxEndurance=Math.max(8,10+c.level*2+con);c.endurance=c.maxEndurance;c.maxHope=Math.max(2,3+Math.max(0,wis));c.hope=c.maxHope;c.defense=10+dex;c.armor=10}
+function makeCampaign(p={}){return{id:uid('camp'),title:p.title||'Untitled Journey',characterId:p.characterId||state?.activeCharacterId||'',era:p.era||'Third Age Wilderness',region:p.region||'Bree-land',tone:p.tone||'Heroic Adventure',shadowLevel:p.shadowLevel||'Growing Darkness',premise:p.premise||'',location:p.region||'Bree-land',messages:[{role:'gm',mode:'in',text:`The road opens before you in ${p.region||'Bree-land'}. The air feels old, and the world seems to wait for your first choice.`,at:new Date().toISOString()}],oocMessages:[{role:'gm',mode:'out',text:'OOC helper ready. Ask rules, planning, or app questions here.',at:new Date().toISOString()}],quests:[{id:uid('quest'),title:p.title?`Begin: ${p.title}`:'Follow the Whispering Road',status:'Active',type:'Main Quest',detail:p.premise||'Discover what danger or rumor has called you onto the road.',rewards:'XP, coin, allies, and lore'}],journey:{currentRegion:p.region||'Bree-land',destination:'Undecided',pace:'Normal',supplies:'3 days',fatigue:0,weather:'Clear but watchful',roadDanger:'Unknown',shadowPresence:p.shadowLevel||'Growing Darkness'},inventory:[],shop:defaultShop(p.region||'Bree-land'),bonds:[],npcs:[],party:[],journal:{memories:[],sessionLogs:[]},sceneImagePrompt:'A dark fantasy Middle-earth road at dusk, ancient hills, distant ruins, golden ring-like light, cinematic painterly realism.',soundtrack:'Low strings, distant choir, soft frame drum, lonely road ambience.',gmSettings:{tone:p.tone||'Heroic Adventure'}}}
+function defaultShop(region){const base=[{id:uid('shop'),name:'Rations',price:2,type:'Supply',desc:'One day of food.'},{id:uid('shop'),name:'Travel cloak',price:8,type:'Gear',desc:'Weather-worn but reliable.'},{id:uid('shop'),name:'Healing herbs',price:12,type:'Herb',desc:'Useful after very bad decisions.'},{id:uid('shop'),name:'Torch bundle',price:3,type:'Supply',desc:'For caves, tombs, and obvious mistakes.'}];const r={'Erebor':[{id:uid('shop'),name:'Dwarven whetstone',price:15,type:'Tool',desc:'Keeps a blade honest.'}],Rivendell:[{id:uid('shop'),name:'Elven waybread',price:10,type:'Supply',desc:'Light, sustaining, and judging your diet.'}],'Bree-land':[{id:uid('shop'),name:'Pipeweed pouch',price:3,type:'Comfort',desc:'A morale item and a personality choice.'}]};return base.concat(r[region]||[])}
+function init(){fillSelect('charAncestry',ancestryOptions);fillSelect('charCulture',cultureOptions);fillSelect('charClass',classOptions);fillSelect('charBackground',backgroundOptions);fillSelect('charRegion',regionOptions);fillSelect('campEra',eraOptions);fillSelect('campRegion',regionOptions);fillSelect('campTone',toneOptions);fillSelect('campShadow',shadowOptions);portraitUpload.addEventListener('change',e=>readImage(e.target.files[0],d=>{tempPortrait=d;toast('Portrait loaded.')}));tokenUpload.addEventListener('change',e=>readImage(e.target.files[0],d=>{tempToken=d;toast('Token loaded.')}));renderDashboard();renderNav();renderGame()}
+function fillSelect(id,arr){document.getElementById(id).innerHTML=arr.map(o=>`<option>${esc(o)}</option>`).join('')}
+function readImage(file,cb){if(!file)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+function getCharacter(id=state.activeCharacterId){return state.characters.find(c=>c.id===id)}
+function getCampaign(id=state.activeCampaignId){return state.campaigns.find(c=>c.id===id)}
+function imgOrIcon(src,icon){return src?`<img class="avatar" src="${src}" alt="">`:`<div class="avatar">${icon}</div>`}
+function go(screen){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(`screen-${screen}`).classList.add('active');appTop.classList.toggle('hidden',screen==='game');if(screen==='dashboard')renderDashboard();if(screen==='campaignBuilder')fillCampaignCharacters();if(screen==='game')renderGame()}
+function fillCampaignCharacters(){campCharacter.innerHTML=state.characters.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.ancestry)} ${esc(c.className)}</option>`).join('')}
+function renderDashboard(){characterList.innerHTML=state.characters.length?state.characters.map(c=>`<div class="list-item">${imgOrIcon(c.portrait,'⚔')}<div class="list-main"><strong>${esc(c.name)}</strong><span class="tiny">Lvl ${c.level} · ${esc(c.culture)} ${esc(c.ancestry)} · ${esc(c.className)}</span></div><div class="pill-row"><button class="btn small" onclick="useCharacter('${c.id}')">Use</button><button class="btn small danger" onclick="deleteCharacter('${c.id}')">Delete</button></div></div>`).join(''):`<p class="muted">No heroes yet. Tragic. Fix it.</p>`;campaignList.innerHTML=state.campaigns.length?state.campaigns.slice().reverse().map(c=>{const pc=getCharacter(c.characterId);return`<div class="list-item">${imgOrIcon(pc?.portrait,'✦')}<div class="list-main"><strong>${esc(c.title)}</strong><span class="tiny">${esc(c.era)} · ${esc(c.region)} · ${esc(pc?.name||'No character')}</span></div><div class="pill-row"><button class="btn small" onclick="openCampaign('${c.id}')">Open</button><button class="btn small danger" onclick="deleteCampaign('${c.id}')">Delete</button></div></div>`}).join(''):`<p class="muted">No journeys yet. The road is being dramatic about it.</p>`}
+function useCharacter(id){state.activeCharacterId=id;saveAll();renderDashboard();toast('Character selected.')}
+function openCampaign(id){state.activeCampaignId=id;const c=getCampaign(id);if(c)state.activeCharacterId=c.characterId;activeSection='story';saveAll();go('game')}
+function continueLatestCampaign(){const c=state.campaigns[state.campaigns.length-1];c?openCampaign(c.id):go('campaignBuilder')}
+function deleteCharacter(id){const c=getCharacter(id);if(!c||!confirm(`Delete character "${c.name}"?`))return;state.characters=state.characters.filter(x=>x.id!==id);if(state.activeCharacterId===id)state.activeCharacterId=state.characters[0]?.id||'';saveAll();renderDashboard();toast('Character deleted.')}
+function deleteCampaign(id){const c=getCampaign(id);if(!c||!confirm(`Delete campaign "${c.title}"?`))return;state.campaigns=state.campaigns.filter(x=>x.id!==id);if(state.activeCampaignId===id)state.activeCampaignId=state.campaigns[0]?.id||'';saveAll();go('dashboard');toast('Campaign deleted.')}
+function randomizeCharacterSeed(){const names=['Aric Vale','Mira Brandybrook','Borin Stonehand','Laerwen','Eldan Greycloak','Toma Tookish'];charName.value=names[Math.floor(Math.random()*names.length)];charAncestry.value=ancestryOptions[Math.floor(Math.random()*ancestryOptions.length)];charCulture.value=cultureOptions[Math.floor(Math.random()*cultureOptions.length)];charClass.value=classOptions[Math.floor(Math.random()*classOptions.length)];charBackground.value=backgroundOptions[Math.floor(Math.random()*backgroundOptions.length)];charRegion.value=regionOptions[Math.floor(Math.random()*regionOptions.length)];toast('Seeded a hero. Blame the dice.')}
+function saveCharacterFromForm(){const stats={str:+statStr.value||10,dex:+statDex.value||10,con:+statCon.value||10,int:+statInt.value||10,wis:+statWis.value||10,pre:+statPre.value||10};const c=makeCharacter({name:charName.value.trim()||'Unnamed Wanderer',level:+charLevel.value||1,ancestry:charAncestry.value,culture:charCulture.value,className:charClass.value,background:charBackground.value,region:charRegion.value,notes:charNotes.value,portrait:tempPortrait,token:tempToken||tempPortrait,stats});state.characters.push(c);state.activeCharacterId=c.id;tempPortrait='';tempToken='';saveAll();toast('Hero saved.');go('dashboard')}
+function createCampaignFromForm(){if(!state.characters.length){toast('Make a character first, boss.');go('characterBuilder');return}const c=makeCampaign({title:campTitle.value.trim()||'Untitled Journey',characterId:campCharacter.value,era:campEra.value,region:campRegion.value,tone:campTone.value,shadowLevel:campShadow.value,premise:campPremise.value.trim()});state.campaigns.push(c);state.activeCampaignId=c.id;state.activeCharacterId=c.characterId;saveAll();go('game')}
+function openDrawer(){navDrawer.classList.add('open');drawerBackdrop.classList.add('open')}function closeDrawer(){navDrawer.classList.remove('open');drawerBackdrop.classList.remove('open')}
+function renderNav(){if(!navList)return;navList.innerHTML=navItems.map(([id,label,icon])=>`<button class="nav-item ${activeSection===id?'active':''}" onclick="selectSection('${id}')"><span class="nav-icon">${icon}</span><span>${label}</span></button>`).join('')}
+function selectSection(id){activeSection=id;closeDrawer();renderGame()}
+function renderGame(){const camp=getCampaign();if(!camp)return;const pc=getCharacter(camp.characterId);gameTitle.textContent=camp.title;gameSubtitle.textContent=`${camp.era} · ${camp.region} · ${pc?.name||'No character'}`;activeLabel.textContent=(navItems.find(n=>n[0]===activeSection)?.[1]||'Story');renderNav();const renders={story:renderStory,quests:renderQuests,journey:renderJourney,character:renderCharacter,progression:renderProgression,inventory:renderInventory,shop:renderShop,party:renderParty,bonds:renderBonds,journal:renderJournal,campaign:renderCampaignControl};gameContent.innerHTML=(renders[activeSection]||renderStory)(camp,pc);if(activeSection==='story')renderMessages()}
+function mainQuest(camp){return camp.quests.find(q=>q.status==='Active'&&String(q.type).toLowerCase().includes('main'))||camp.quests.find(q=>q.status==='Active')||camp.quests[0]}
+function renderStory(camp,pc){const q=mainQuest(camp);return`<div class="card"><div class="quest-strip"><div><span class="tiny">Current Quest</span><br><strong>${esc(q?.title||'No active quest')}</strong><div class="tiny">${esc(q?.status||'')} · ${esc(q?.detail||'Ask the GM what danger is calling.')}</div></div><button class="btn small" onclick="selectSection('quests')">Open Quests</button></div><details class="fold"><summary>♫ Soundtrack</summary><div class="fold-body">${esc(camp.soundtrack||'No soundtrack set.')}</div></details><details class="fold"><summary>▧ Scene Image · click to view</summary><div class="fold-body">${esc(camp.sceneImagePrompt||'The GM will place scene image prompts here when useful.')}</div></details><div class="story-tabs"><button id="tabIn" class="${activeChatMode==='in'?'active':''}" onclick="setChatMode('in')">⚔ In Character</button><button id="tabOut" class="${activeChatMode==='out'?'active':''}" onclick="setChatMode('out')">▱ Out of Character</button></div><div class="section-script"></div><div id="messages" class="messages"></div></div><div class="composer"><div class="composer-inner"><textarea id="chatInput" placeholder="What do you do? Describe your action..." onkeydown="handleComposerKey(event)"></textarea><button id="sendBtn" class="btn primary send" onclick="sendToGM()">➤</button></div></div>`}
+function setChatMode(m){activeChatMode=m;renderGame()}
+function renderMessages(){const camp=getCampaign();const arr=activeChatMode==='out'?camp.oocMessages:camp.messages;const box=document.getElementById('messages');if(!box)return;box.innerHTML=arr.map(m=>`<div class="message ${m.role==='player'?'player':'gm'} ${m.mode==='out'?'ooc':''}"><div class="meta">${m.role==='player'?'You':'GM'} · ${new Date(m.at).toLocaleString()}</div>${esc(m.text)}</div>`).join('');box.scrollTop=box.scrollHeight}
+function handleComposerKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToGM()}}
+async function sendToGM(){const input=document.getElementById('chatInput'),btn=document.getElementById('sendBtn');const text=input?.value.trim();if(!text)return;const camp=getCampaign();const target=activeChatMode==='out'?camp.oocMessages:camp.messages;target.push({role:'player',mode:activeChatMode,text,at:new Date().toISOString()});input.value='';renderMessages();saveAll();if(btn){btn.disabled=true;btn.textContent='…'}try{const res=await fetch('/api/gm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({playerMessage:text,chatMode:activeChatMode,state:compactCampaignState(camp)})});const json=await res.json();if(!res.ok||!json.ok)throw new Error(json.error||'GM request failed');receiveGM(json.structured||{})}catch(err){target.push({role:'gm',mode:activeChatMode,text:`The road goes quiet for a moment. The AI backend did not answer: ${err.message}`,at:new Date().toISOString()});renderMessages();saveAll()}finally{if(btn){btn.disabled=false;btn.textContent='➤'}}}
+function receiveGM(s){const camp=getCampaign();let parts=[];if(s.narration)parts.push(s.narration);if(s.ooc)parts.push('OOC: '+s.ooc);if(Array.isArray(s.rollRequests)&&s.rollRequests.length)parts.push('Roll Requests:\n'+s.rollRequests.map(r=>`• ${r.skill||'Check'} DC ${r.dc||'?'}: ${r.reason||''}`).join('\n'));const target=activeChatMode==='out'?camp.oocMessages:camp.messages;target.push({role:'gm',mode:activeChatMode,text:parts.join('\n\n')||'The GM considers the next moment.',at:new Date().toISOString()});if(s.imagePrompt)camp.sceneImagePrompt=s.imagePrompt;if(s.soundtrack)camp.soundtrack=s.soundtrack;if(Array.isArray(s.appUpdates))applyAppUpdates(s.appUpdates);saveAll();renderGame()}
+function renderQuests(camp){return pageWrap('Quests',`<button class="btn small" onclick="manualQuest()">＋ Add</button>`,camp.quests.map(q=>`<div class="row"><div><strong>${esc(q.title)}</strong><div class="tiny">${esc(q.type)} · ${esc(q.status)}</div><div class="muted">${esc(q.detail)}</div>${q.rewards?`<div class="tiny">Rewards: ${esc(q.rewards)}</div>`:''}</div><button class="btn small" onclick="toggleQuest('${q.id}')">Toggle</button></div>`).join('')||'<p class="muted">No quests.</p>')}
+function renderJourney(camp){const j=camp.journey;return pageWrap('Journey / Map','',`<div class="panel-grid">${[['Current Region',j.currentRegion],['Destination',j.destination],['Pace',j.pace],['Supplies',j.supplies],['Fatigue',j.fatigue],['Weather',j.weather],['Road Danger',j.roadDanger],['Shadow',j.shadowPresence]].map(([a,b])=>`<div class="row"><span>${esc(a)}</span><strong>${esc(b)}</strong></div>`).join('')}</div>`)}
+function renderCharacter(camp,pc){if(!pc)return pageWrap('Character','','<p>No character linked.</p>');return pageWrap('Character',`<button class="btn small" onclick="saveAll();toast('Character saved.')">Save</button>`,`<div class="list-item">${imgOrIcon(pc.portrait,'⚔')}<div class="list-main"><strong>${esc(pc.name)}</strong><span class="tiny">${esc(pc.culture)} ${esc(pc.ancestry)} · ${esc(pc.className)} · Lvl ${pc.level}</span></div></div><div class="list-item">${imgOrIcon(pc.token||pc.portrait,'◌')}<div class="list-main"><strong>Battle Token</strong><span class="tiny">Separate token supported.</span></div></div><div class="grid two"><label>Change Portrait<input type="file" accept="image/*" onchange="changePortrait(this)"></label><label>Change Token<input type="file" accept="image/*" onchange="changeToken(this)"></label></div><button class="btn small" onclick="usePortraitAsToken()">Use Portrait as Token</button><div class="stat-grid" style="margin-top:14px">${Object.entries(pc.stats).map(([k,v])=>`<div class="stat"><span class="tiny">${k.toUpperCase()}</span><strong>${v}</strong></div>`).join('')}</div><div class="grid two" style="margin-top:14px"><div><span class="tiny">Endurance</span><div class="meter"><span style="width:${Math.min(100,pc.endurance/pc.maxEndurance*100)}%"></span></div><div class="tiny">${pc.endurance}/${pc.maxEndurance}</div></div><div><span class="tiny">Hope</span><div class="meter"><span style="width:${Math.min(100,pc.hope/pc.maxHope*100)}%"></span></div><div class="tiny">${pc.hope}/${pc.maxHope}</div></div></div><p class="tiny">Shadow: ${pc.shadow||0} · Defense: ${pc.defense||10} · Armor: ${pc.armor||10} · Coin: ${pc.coin||0}</p>`)}
+function changePortrait(input){const pc=getCharacter(getCampaign().characterId);readImage(input.files[0],d=>{pc.portrait=d;saveAll();renderGame();toast('Portrait changed.')})}function changeToken(input){const pc=getCharacter(getCampaign().characterId);readImage(input.files[0],d=>{pc.token=d;saveAll();renderGame();toast('Token changed.')})}function usePortraitAsToken(){const pc=getCharacter(getCampaign().characterId);pc.token=pc.portrait;saveAll();renderGame()}
+function renderProgression(camp,pc){return pc?pageWrap('Progression','',`<div class="stat-grid"><div class="stat"><span class="tiny">Level</span><strong>${pc.level}</strong></div><div class="stat"><span class="tiny">XP</span><strong>${pc.xp||0}</strong></div><div class="stat"><span class="tiny">Shadow</span><strong>${pc.shadow||0}</strong></div></div><h3>Skills</h3>${pc.skills.map(s=>`<div class="row"><span>${esc(s)}</span><span class="pill">trained</span></div>`).join('')}<h3>Virtues / Feats</h3>${(pc.virtues.length?pc.virtues:['None yet']).map(v=>`<div class="row"><span>${esc(v)}</span></div>`).join('')}`):pageWrap('Progression','','<p>No character.</p>')}
+function renderInventory(camp,pc){const gear=[...(pc?.gear||[]),...camp.inventory.map(i=>`${i.name}${i.qty>1?' x'+i.qty:''}`)];return pageWrap('Inventory',`<span class="pill">Coin ${pc?.coin??0}</span>`,`${gear.map(g=>`<div class="row"><span>${esc(g)}</span></div>`).join('')||'<p class="muted">Empty. Bold survival strategy.</p>'}<div class="mini-divider"></div><label>Add Item<input id="newItemName" placeholder="Item name"></label><button class="btn small" onclick="manualAddItem()">＋ Add</button>`)}
+function renderShop(camp,pc){return pageWrap('Shop',`<span class="pill">Coin ${pc?.coin??0}</span>`,camp.shop.map(i=>`<div class="row"><div><strong>${esc(i.name)}</strong><div class="tiny">${esc(i.type)} · ${esc(i.desc||'')}</div></div><button class="btn small" onclick="buyItem('${i.id}')">${i.price} coin</button></div>`).join('')+`<button class="btn small" onclick="getCampaign().shop=defaultShop(getCampaign().region);saveAll();renderGame()">Reset Regional Shop</button>`)}
+function renderParty(camp){return pageWrap('Party',`<button class="btn small" onclick="manualParty()">＋ Add</button>`,camp.party.length?camp.party.map(p=>`<div class="row"><div><strong>${esc(p.name)}</strong><div class="tiny">${esc(p.role||'Companion')}</div></div></div>`).join(''):'<p class="muted">No companions currently traveling with you.</p>')}
+function renderBonds(camp){return pageWrap('Bonds',`<button class="btn small" onclick="manualBond()">＋ Add</button>`,camp.bonds.length?camp.bonds.map(b=>`<div class="row"><div><strong>${esc(b.name)}</strong><div class="tiny">${esc(b.status)} · Influence ${b.score}</div><div class="muted">${esc(b.notes||'')}</div></div></div>`).join(''):'<p class="muted">No bonds yet. Learn names, earn trust, make enemies. Friendship with stabbing nearby.</p>')}
+function renderJournal(camp){return pageWrap('Journal','',`<h3>Memories</h3>${camp.journal.memories.length?camp.journal.memories.map(m=>`<div class="row"><span>${esc(m.text)}</span></div>`).join(''):'<p class="muted">No memories logged.</p>'}<h3>Session Logs</h3>${camp.journal.sessionLogs.length?camp.journal.sessionLogs.map(m=>`<div class="row"><span>${esc(m.text)}</span></div>`).join(''):'<p class="muted">No session logs.</p>'}`)}
+function renderCampaignControl(camp){return pageWrap('Campaign Control','',`<p class="muted">Copy campaign state for debugging, or paste structured GM update JSON to apply local changes.</p><button class="btn small" onclick="copyCampaignState()">Copy Campaign State</button><label>Apply GM Update JSON<textarea id="syncInput" placeholder='{"appUpdates":[{"type":"ADD_COIN","payload":{"amount":5}}]}'></textarea></label><button class="btn small" onclick="applySyncJson()">Apply GM Update</button><div class="card pad danger-zone" style="margin-top:14px"><strong>Danger Zone</strong><p class="tiny">Deletes only this Middle-earth campaign from local storage.</p><button class="btn small danger" onclick="deleteCampaign('${camp.id}')">Delete Campaign</button></div>`)}
+function pageWrap(title,actions,body){return`<div class="card pad"><div class="section-title"><h2>${title}</h2><div class="pill-row">${actions||''}</div></div><div class="section-script"></div>${body}</div>`}
+function manualAddItem(){const v=document.getElementById('newItemName')?.value.trim();if(!v)return;getCampaign().inventory.push({id:uid('item'),name:v,qty:1,type:'Item',desc:'Manually added'});saveAll();renderGame()}
+function buyItem(id){const camp=getCampaign(),pc=getCharacter(camp.characterId),i=camp.shop.find(x=>x.id===id);if(!i||!pc)return;if((pc.coin||0)<i.price){toast('Not enough coin. Poverty: the real final boss.');return}pc.coin-=i.price;camp.inventory.push({id:uid('item'),name:i.name,qty:1,type:i.type,desc:i.desc});saveAll();renderGame();toast(`Bought ${i.name}.`)}
+function manualQuest(){const t=prompt('Quest title?');if(!t)return;getCampaign().quests.push({id:uid('quest'),title:t,status:'Active',type:'Manual Quest',detail:'',rewards:''});saveAll();renderGame()}function toggleQuest(id){const q=getCampaign().quests.find(q=>q.id===id);if(q)q.status=q.status==='Active'?'Complete':'Active';saveAll();renderGame()}function manualParty(){const n=prompt('Companion name?');if(!n)return;getCampaign().party.push({id:uid('party'),name:n,role:'Companion'});saveAll();renderGame()}function manualBond(){const n=prompt('NPC name?');if(!n)return;getCampaign().bonds.push({id:uid('bond'),name:n,score:1,status:'Acquaintance',notes:'Manually added'});saveAll();renderGame()}
+function copyCampaignState(){navigator.clipboard?.writeText(JSON.stringify(compactCampaignState(getCampaign()),null,2));toast('Campaign state copied.')}function applySyncJson(){try{const j=JSON.parse(syncInput.value);applyAppUpdates(j.appUpdates||(j.type?[j]:[]));saveAll();renderGame();toast('GM update applied.')}catch{toast('Invalid JSON. Goblins in the braces.')}}
+function compactCampaignState(camp){return{appVersion:APP_VERSION,ruleset:'Middle-earth Chronicles v0.6.0',campaignTitle:camp.title,era:camp.era,region:camp.region,location:camp.location,character:getCharacter(camp.characterId),quests:camp.quests,journal:camp.journal,bonds:camp.bonds,npcs:camp.npcs,party:camp.party,inventory:camp.inventory,journey:camp.journey,shop:camp.shop,recentInCharacter:camp.messages.slice(-8),recentOutOfCharacter:camp.oocMessages.slice(-6),gmSettings:camp.gmSettings}}
+function bondStatus(score){if(score>=25)return'Loyal';if(score>=16)return'Follower';if(score>=11)return'Ally';if(score>=6)return'Friend';if(score>=1)return'Acquaintance';if(score<=-25)return'Arch Enemy';if(score<=-16)return'Plotting Against You';if(score<=-11)return'Will Kill on Sight';if(score<=-6)return'Hatred';if(score<=-1)return'Dislike';return'Neutral'}
+function applyAppUpdates(updates){const camp=getCampaign(),pc=getCharacter(camp.characterId);for(const u of updates){const type=u.type,p=u.payload||{};if(type==='ADD_NPC'&&!camp.npcs.some(n=>n.name===p.name))camp.npcs.push({id:uid('npc'),name:p.name||'Unknown NPC',role:p.role||'NPC',location:p.location||camp.location,notes:p.notes||'',portrait:p.portrait||''});if(type==='UPDATE_INFLUENCE'){const name=p.name||p.npcName;let b=camp.bonds.find(x=>x.name===name);if(!b){b={id:uid('bond'),name,score:0,status:'Acquaintance',notes:''};camp.bonds.push(b)}b.score=(b.score||0)+Number(p.amount||p.delta||0);b.status=p.status||bondStatus(b.score);b.notes=p.notes||b.notes}if(type==='ADD_XP'&&pc)pc.xp=(pc.xp||0)+Number(p.amount||0);if(type==='ADD_ITEM'){camp.inventory.push({id:uid('item'),name:p.name||'Unknown item',qty:Number(p.qty||1),type:p.type||'Item',desc:p.desc||p.notes||''});if(pc)pc.gear.push(p.name||'Unknown item')}if(type==='REMOVE_ITEM'){camp.inventory=camp.inventory.filter(i=>i.name!==p.name&&i.id!==p.id);if(pc)pc.gear=pc.gear.filter(i=>i!==p.name)}if(type==='ADD_COIN'&&pc)pc.coin=(pc.coin||0)+Number(p.amount||0);if(type==='SPEND_COIN'&&pc)pc.coin=Math.max(0,(pc.coin||0)-Number(p.amount||0));if(type==='CREATE_QUEST')camp.quests.push({id:uid('quest'),title:p.title||'New Quest',status:p.status||'Active',type:p.type||'Quest',detail:p.detail||p.notes||'',rewards:p.rewards||''});if(type==='UPDATE_QUEST'){const q=camp.quests.find(q=>q.title===p.title||q.id===p.id);if(q)Object.assign(q,p)}if(type==='COMPLETE_QUEST'||type==='FAIL_QUEST'){const q=camp.quests.find(q=>q.title===p.title||q.id===p.id);if(q)q.status=type==='COMPLETE_QUEST'?'Complete':'Failed'}if(type==='ADD_JOURNAL_MEMORY')camp.journal.memories.push({id:uid('mem'),text:p.text||p.memory||'',at:new Date().toISOString()});if(type==='UPDATE_JOURNEY')Object.assign(camp.journey,p);if(type==='OPEN_SHOP')camp.shop=Array.isArray(p.items)?p.items.map(i=>({id:uid('shop'),...i})):camp.shop;if(type==='SAVE_SESSION_LOG')camp.journal.sessionLogs.push({id:uid('log'),text:p.text||'',at:new Date().toISOString()})}}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+init();
+</script>
+</body>
+</html>
